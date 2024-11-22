@@ -1,0 +1,66 @@
+-- Função
+
+local TweenService = game:GetService("TweenService")
+local TweenInfoUp = TweenInfo.new(5)
+local TweenInfoDown = TweenInfo.new(6)
+
+-- Criação
+
+local Sound = Instance.new("Sound")
+Sound.Name = "Break"
+Sound.Volume = 3
+Sound.PlaybackSpeed = 1
+Sound.Looped = false
+Sound.SoundId = "rbxassetid://6729922069"
+
+local Tool = Instance.new("Tool")
+Tool.Parent = game.Players.LocalPlayer.Backpack
+Tool.TextureId = "http://www.roblox.com/asset/?id=12507812129"
+Tool.Enabled = true
+Tool.CanBeDropped = true
+
+Sound.Parent = Tool
+
+local Handle = Instance.new("Part")
+Handle.Parent = Tool
+Handle.Size = Vector3.new(1, 1, 1)
+Handle.Anchored = false
+Handle.Material = Enum.Material.WoodPlanks
+Handle.BrickColor = BrickColor.new("Brown")
+Handle.CanTouch = true
+
+Tool.PrimaryPart = Handle
+
+-- Lógica
+
+Handle.Touched:Connect(function(hit)
+	Sound:Play()
+	
+	Handle.CanTouch = false
+	
+	wait(1)
+	
+	if hit.Parent:IsA("Model") then
+		for i,v in pairs(hit.Parent:GetChildren()) do
+			if v:IsA("BasePart") then
+				TweenService:Create(v, TweenInfoUp, {Position = hit.Position + Vector3.new(0, 3, 0)}):Play()
+			end
+		end
+		wait(5)
+		for i,v in pairs(hit.Parent:GetChildren()) do
+			if v:IsA("BasePart") then
+				TweenService:Create(v, TweenInfoDown, {Position = hit.Position + Vector3.new(0, -7, 0)}):Play()
+			end
+		end
+		wait(6)
+		hit.Parent:Destroy()
+	else
+		TweenService:Create(hit, TweenInfoUp, {Position = hit.Position + Vector3.new(0, 3, 0)}):Play()
+		wait(5)
+		TweenService:Create(hit, TweenInfoDown, {Position = hit.Position + Vector3.new(0, -7, 0)}):Play()
+		wait(6)
+		hit:Destroy()
+	end
+	
+	Handle.CanTouch = true
+end)
